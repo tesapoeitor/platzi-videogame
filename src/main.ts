@@ -1,5 +1,5 @@
 import './style.css'
-import { emojis } from './maps'
+import { emojis, maps } from './maps'
 
 const canvas = document.querySelector("#game") as HTMLCanvasElement
 const game = canvas.getContext("2d") as CanvasRenderingContext2D
@@ -22,11 +22,18 @@ const startGame = () => {
     game.font = `${elementsSize}px Verdana`
     game.textAlign = "end"
 
-    for (let i = 1; i <= 10; i++) {
-        game.fillText(emojis['X'], elementsSize, elementsSize * i);
-        console.log({canvasSize, elementsSize: elementsSize * i})
+    const map = maps[1];
+    const mapRows = map.trim().split('\n')
+    const mapRowCols = mapRows.map(row => row.trim().split(''))
+    console.log({map, mapRows, mapRowCols})
+
+    for (let row = 1; row <= 10; row++) {
+        for (let colum = 1; colum <= 10; colum++) {
+            game.fillText(emojis[mapRowCols[row - 1][colum - 1]], elementsSize * colum, elementsSize * row);
+        }
     }
 
+    // mapRowCols.forEach(row => row.forEach(colum => game.fillText))
 }
 
 const setCanvasSize = () => {

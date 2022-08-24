@@ -2,8 +2,11 @@
  * Reglas:
  * El final de cada nivel debe ser el inicio del siguiente
 */
+interface emojis {
+  [key: string]: string
+}
 
-export const emojis = {
+export const emojis: emojis = {
     '-': ' ',
     'O': '🚪',
     'X': '💣',
@@ -15,7 +18,7 @@ export const emojis = {
     'HEART': '❤️',
   };
   
-  const maps = [];
+export const maps: string[] = [];
   maps.push(`
     IXXXXXXXXX
     -XXXXXXXXX
