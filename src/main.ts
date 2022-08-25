@@ -4,6 +4,11 @@ import { emojis, maps } from './maps'
 const canvas = document.querySelector("#game") as HTMLCanvasElement
 const game = canvas.getContext("2d") as CanvasRenderingContext2D
 
+const btnUp = document.querySelector("#up")
+const btnLeft = document.querySelector("#left")
+const btnRight  = document.querySelector("#right")
+const btnDown = document.querySelector("#down")
+
 let canvasSize: number
 
 const startGame = () => {
@@ -27,12 +32,6 @@ const startGame = () => {
     const mapRowCols = mapRows.map(row => row.trim().split(''))
     console.log({map, mapRows, mapRowCols})
 
-    // for (let row = 1; row <= 10; row++) {
-    //     for (let colum = 1; colum <= 10; colum++) {
-    //         game.fillText(emojis[mapRowCols[row - 1][colum - 1]], elementsSize * colum, elementsSize * row);
-    //     }
-    // }
-
     mapRowCols.forEach((row, rowIndex) => {
         row.forEach((colum, columIndex) => {
             const emoji = emojis[colum]
@@ -55,5 +54,25 @@ const setCanvasSize = () => {
     startGame()
 }
 
+const move = (key: "up" | "left" | "right" | "down") => {
+    return () => {
+        console.log(`Pressed: ${key}`)
+    }
+}
+
+const moveByKey = (event: any) => {
+    if(event.key == "ArrowUp") move("up")()
+    else if(event.key == "ArrowLeft") move("left")()
+    else if(event.key == "ArrowRight") move("right")()
+    else if(event.key == "ArrowDown") move("down")()
+}
+
+
 window.addEventListener("DOMContentLoaded", setCanvasSize)
 window.addEventListener("resize", setCanvasSize)
+
+window.addEventListener("keydown", moveByKey)
+btnUp?.addEventListener("click", move("up"))
+btnLeft?.addEventListener("click", move("left"))
+btnRight?.addEventListener("click", move("right"))
+btnDown?.addEventListener("click", move("down"))
