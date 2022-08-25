@@ -27,13 +27,22 @@ const startGame = () => {
     const mapRowCols = mapRows.map(row => row.trim().split(''))
     console.log({map, mapRows, mapRowCols})
 
-    for (let row = 1; row <= 10; row++) {
-        for (let colum = 1; colum <= 10; colum++) {
-            game.fillText(emojis[mapRowCols[row - 1][colum - 1]], elementsSize * colum, elementsSize * row);
-        }
-    }
+    // for (let row = 1; row <= 10; row++) {
+    //     for (let colum = 1; colum <= 10; colum++) {
+    //         game.fillText(emojis[mapRowCols[row - 1][colum - 1]], elementsSize * colum, elementsSize * row);
+    //     }
+    // }
 
-    // mapRowCols.forEach(row => row.forEach(colum => game.fillText))
+    mapRowCols.forEach((row, rowIndex) => {
+        row.forEach((colum, columIndex) => {
+            const emoji = emojis[colum]
+            const posX = elementsSize * (rowIndex + 1)
+            const posY = elementsSize * (columIndex + 1)
+
+            game.fillText(emoji, posX, posY)
+        })
+    })
+
 }
 
 const setCanvasSize = () => {
