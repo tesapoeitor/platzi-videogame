@@ -10,6 +10,37 @@ const btnRight  = document.querySelector("#right")
 const btnDown = document.querySelector("#down")
 
 let canvasSize: number
+let elementsSize: number
+let mapRowCols: string[][]
+
+const playerPosition: {x: undefined | number, y: undefined | number} = {
+    x: undefined,
+    y: undefined
+}
+
+const movePlayer = (x: number, y: number) => {
+    game.fillText(emojis["PLAYER"], x, y)
+}
+
+const render = (map: string[][]) => {
+    game.clearRect(0, 0, canvasSize, canvasSize)
+
+    map.forEach((row, rowIndex) => {
+        row.forEach((colum, columIndex) => {
+            const emoji = emojis[colum]
+            const posX = elementsSize * (rowIndex + 1)
+            const posY = elementsSize * (columIndex + 1)
+            
+            if(colum === "O" && (!playerPosition.x && !playerPosition.y)) {
+                playerPosition.x = posX
+                playerPosition.y = posY
+                console.log({playerPosition})
+            }
+
+            game.fillText(emoji, posX, posY)
+        })
+    })
+}
 
 const startGame = () => {
     // game.fillRect(0, 0, 100, 100)
@@ -22,26 +53,37 @@ const startGame = () => {
     canvas.setAttribute("width", String(canvasSize))
     canvas.setAttribute("height", String(canvasSize))
 
-    const elementsSize = canvasSize / 10
+    elementsSize = canvasSize / 10
 
     game.font = `${elementsSize}px Verdana`
     game.textAlign = "end"
 
-    const map = maps[1];
+    const map = maps[2];
     const mapRows = map.trim().split('\n')
-    const mapRowCols = mapRows.map(row => row.trim().split(''))
+    mapRowCols = mapRows.map(row => row.trim().split(''))
     console.log({map, mapRows, mapRowCols})
 
-    mapRowCols.forEach((row, rowIndex) => {
-        row.forEach((colum, columIndex) => {
-            const emoji = emojis[colum]
-            const posX = elementsSize * (rowIndex + 1)
-            const posY = elementsSize * (columIndex + 1)
+    // mapRowCols.forEach((row, rowIndex) => {
+    //     row.forEach((colum, columIndex) => {
+    //         const emoji = emojis[colum]
+    //         const posX = elementsSize * (rowIndex + 1)
+    //         const posY = elementsSize * (columIndex + 1)
+            
+    //         if(colum === "O") {
+    //             playerPosition.x = posX
+    //             playerPosition.y = posY
+    //             console.log({playerPosition})
+    //         }
 
-            game.fillText(emoji, posX, posY)
-        })
-    })
+    //         game.fillText(emoji, posX, posY)
+    //     })
+    // })
 
+    render(mapRowCols)
+
+    if(playerPosition.x && playerPosition.y) {
+        movePlayer(playerPosition.x, playerPosition.y)
+    }
 }
 
 const setCanvasSize = () => {
@@ -57,10 +99,31 @@ const setCanvasSize = () => {
 const move = (key: "up" | "left" | "right" | "down") => {
     return () => {
         console.log(`Pressed: ${key}`)
+        if(playerPosition.x && playerPosition.y) {
+
+            if(key === "up" && (playerPosition.y > elementsSize)) {
+                playerPosition.y -= elementsSize
+
+            } else if(key === "right" && (playerPosition.x < canvasSize)) {
+                playerPosition.x += elementsSize
+
+            } else if(key === "down" && (playerPosition.y < canvasSize)) {
+                playerPosition.y += elementsSize
+
+            } else if(key === "left" && (playerPosition.x > elementsSize)) {
+                playerPosition.x -= elementsSize
+                
+            }
+    
+            render(mapRowCols)
+            movePlayer(playerPosition.x, playerPosition.y)
+            console.log({playerPosition})
+        }
+
     }
 }
 
-const moveByKey = (event: any) => {
+const moveByKey = (event: KeyboardEvent) => {
     if(event.key == "ArrowUp") move("up")()
     else if(event.key == "ArrowLeft") move("left")()
     else if(event.key == "ArrowRight") move("right")()
