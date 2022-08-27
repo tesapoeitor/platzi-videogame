@@ -18,7 +18,21 @@ const playerPosition: {x: undefined | number, y: undefined | number} = {
     y: undefined
 }
 
+const giftPosition: {x: undefined | number, y: undefined | number} = {
+    x: undefined,
+    y: undefined
+}
+
 const movePlayer = (x: number, y: number) => {
+    if(playerPosition.x && giftPosition.x && playerPosition.y && giftPosition.y) {
+        const giftCollisionX = playerPosition.x.toFixed(3) == giftPosition.x.toFixed(3);
+        const giftCollisionY = playerPosition.y.toFixed(3) == giftPosition.y.toFixed(3);
+        const giftCollision = giftCollisionX && giftCollisionY;
+
+        if(giftCollision) {
+            console.log("pasaste de nivel")
+        }
+    }
     game.fillText(emojis["PLAYER"], x, y)
 }
 
@@ -35,6 +49,10 @@ const render = (map: string[][]) => {
                 playerPosition.x = posX
                 playerPosition.y = posY
                 console.log({playerPosition})
+            } else if(colum === "I" && (!giftPosition.x && !giftPosition.y)) {
+                giftPosition.x = posX
+                giftPosition.y = posY
+                console.log({giftPosition})
             }
 
             game.fillText(emoji, posX, posY)
