@@ -35,7 +35,10 @@ export class Player {
         })
         
         if(enemyCollision) {
-            this._game.levelFail()
+            
+            this._display.game.fillText(emojis["BOMB_COLLISION"], x, y)
+            setTimeout(this._game.levelFail.bind(this._game), 500)
+            // this._game.levelFail()
             return
         } 
         

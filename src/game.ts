@@ -132,6 +132,7 @@ export class Game {
 
     levelFail() {
         console.log("chocaste contra un enemigo")
+        console.log("this " + this)
         this._lives.reduceLives()
     
         if(this._lives.lives <= 0) {
