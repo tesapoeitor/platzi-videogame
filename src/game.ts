@@ -1,20 +1,14 @@
-import { game, canvasSize, elementsSize, playerPosition, giftPosition, canvas, mapRowCols, level, levelUp, enemyPositions, resetEnemyPositions, setElementsSize, setMapRowCols, setCanvasSize } from "./globalVariables"
+import { game, canvasSize, elementsSize, playerPosition, giftPosition, canvas, mapRowCols, level, enemyPositions, resetEnemyPositions, setElementsSize, setMapRowCols, setCanvasSize } from "./globalVariables"
 import { emojis, maps } from "./maps"
 import { movePlayer } from "./movements"
+import { showLives } from "./show_information"
+import { time } from "./time"
 
 
 const gameWin = () => {
     console.log("ganaste el juego")
+    time.end()
 }
-
-export const levelWin = () => {
-    console.log("pasaste de nivel")
-    console.log({level})
-    levelUp()
-    // resetPlayerPosition()
-    startGame()
-}
-
 export const render = (map: string[][]) => {
     game.clearRect(0, 0, canvasSize, canvasSize)
 
@@ -48,14 +42,13 @@ export const render = (map: string[][]) => {
             game.fillText(emoji, posX, posY)
         })
     })
-    
 
     if(playerPosition.x && playerPosition.y) {
         movePlayer(playerPosition.x, playerPosition.y)
     }
 }
 
-const startGame = () => {
+export const startGame = () => {
 
 	
     // canvas.setAttribute("width", String(canvasSize))
@@ -74,12 +67,15 @@ const startGame = () => {
         return
     }
 
+    time.start()
+
     const mapRows = map.trim().split('\n')
     // mapRowCols = mapRows.map(row => row.trim().split(''))
     setMapRowCols(mapRows.map(row => row.trim().split('')))
     console.log({map, mapRows, mapRowCols})
 
-    
+    showLives()
+
     render(mapRowCols)
 
 }

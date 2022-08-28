@@ -23,10 +23,20 @@ export const setMapRowCols = (value: string[][]) => {
 }
 
 export let level = 0
+export const levelUp = () => {
+    level ++
+}
+export const resetLevel = () => {
+    level = 0
+}
 
 export const playerPosition: Position = {
     x: undefined,
     y: undefined
+}
+export const resetPlayerPosition = () => {
+    playerPosition.x = undefined
+    playerPosition.y = undefined
 }
 
 export const giftPosition: Position = {
@@ -34,9 +44,6 @@ export const giftPosition: Position = {
     y: undefined
 }
 
-export const levelUp = () => {
-    level ++
-}
 
 export let enemyPositions: Position[] = [{
     x: undefined,
@@ -44,4 +51,12 @@ export let enemyPositions: Position[] = [{
 }]
 export const resetEnemyPositions = () => {
     enemyPositions = []
+}
+
+export let lives = 3
+export const reduceLives = () => {
+    lives--
+}
+export const resetLives = () => {
+    lives = 3
 }

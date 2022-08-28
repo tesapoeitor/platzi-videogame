@@ -1,4 +1,5 @@
-import { levelWin, render } from "./game";
+import { render } from "./game";
+import { levelFail, levelWin } from "./levels"
 import { playerPosition, giftPosition, enemyPositions, elementsSize, canvasSize, mapRowCols, game } from "./globalVariables"
 import { emojis } from './maps'
 
@@ -20,8 +21,9 @@ export const movePlayer = (x: number, y: number) => {
     })
     
     if(enemyCollision) {
-        console.log("chocaste contra un enemigo")
-    }
+        levelFail()
+        return
+    } 
     
     game.fillText(emojis["PLAYER"], x, y)
 }
