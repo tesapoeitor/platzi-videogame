@@ -1,96 +1,167 @@
-import { game, canvasSize, elementsSize, playerPosition, giftPosition, canvas, mapRowCols, level, enemyPositions, resetEnemyPositions, setElementsSize, setMapRowCols, setCanvasSize } from "./globalVariables"
+
 import { emojis, maps } from "./maps"
-import { movePlayer } from "./movements"
-import { showLives } from "./show_information"
-import { time } from "./time"
+import { Display } from "./globalVariables"
+import { Time } from "./time"
+import { Lives } from "./lives"
 
 
-const gameWin = () => {
-    console.log("ganaste el juego")
-    time.end()
+interface Position {
+    x: undefined | number,
+    y: undefined | number
 }
-export const render = (map: string[][]) => {
-    game.clearRect(0, 0, canvasSize, canvasSize)
 
-    // enemyPositions = []
-    resetEnemyPositions()
+export class Game {
+    private _level = 0
+    public playerPosition: Position = {
+        x: undefined,
+        y: undefined
+    }
+    public giftPosition: Position = {
+        x: undefined,
+        y: undefined
+    }
+    public enemyPositions: Position[] = [{
+        x: undefined,
+        y: undefined
+    }]
+    private _elementsSize = 0
+    private _mapRowCols: string[][] = [[]]
 
-    map.forEach((row, rowIndex) => {
-        row.forEach((colum, columIndex) => {
-            const emoji = emojis[colum]
-            const posX = elementsSize * (rowIndex + 1)
-            const posY = elementsSize * (columIndex + 1)
+    // Singleton
+    static instance: Game | null = null
+    private constructor(
+        private _time: Time,
+        private _lives: Lives,
+        private _display: Display
+    ) {}
+    static create(time: Time, lives: Lives, global: Display): Game {
+        if(Game.instance === null) { // Si no existe una instancia, se crea una
+          console.log("Se crea una instancia de Game")
+          Game.instance = new Game(time, lives, global) // Aquí se llama al constructor privado
+        }
+        return Game.instance
+    }
 
-            if(colum === "O" && (!playerPosition.x && !playerPosition.y)) {
-                playerPosition.x = posX
-                playerPosition.y = posY
-                console.log({playerPosition})
 
-            } else if(colum === "I") {
-                giftPosition.x = posX
-                giftPosition.y = posY
-                console.log({giftPosition})
+    gameWin() {
+        console.log("ganaste el juego")
+        this._time.end()
+    }
 
-            } else if(colum === "X") {
-                enemyPositions.push({
-                    x: posX,
-                    y: posY
-                })
-
-            }
-
-            game.fillText(emoji, posX, posY)
+    render(map: string[][]) {
+        this._display.game.clearRect(0, 0, this._display.canvasSize, this._display.canvasSize)
+    
+        this.resetEnemyPositions()
+    
+        map.forEach((row, rowIndex) => {
+            row.forEach((colum, columIndex) => {
+                const emoji = emojis[colum]
+                const posX = this.elementsSize * (rowIndex + 1)
+                const posY = this.elementsSize * (columIndex + 1)
+    
+                if(colum === "O" && (!this.playerPosition.x && !this.playerPosition.y)) {
+                    this.playerPosition.x = posX
+                    this.playerPosition.y = posY
+    
+                } else if(colum === "I") {
+                    this.giftPosition.x = posX
+                    this.giftPosition.y = posY
+    
+                } else if(colum === "X") {
+                    this.enemyPositions.push({
+                        x: posX,
+                        y: posY
+                    })
+    
+                }
+    
+                this._display.game.fillText(emoji, posX, posY)
+            })
         })
-    })
-
-    if(playerPosition.x && playerPosition.y) {
-        movePlayer(playerPosition.x, playerPosition.y)
-    }
-}
-
-export const startGame = () => {
-
-	
-    // canvas.setAttribute("width", String(canvasSize))
-    // canvas.setAttribute("height", String(canvasSize))
-
-    // elementsSize = canvasSize / 10
-    setElementsSize(canvasSize / 10)
-
-    game.font = `${elementsSize}px Verdana`
-    game.textAlign = "end"
-
-    const map = maps[level]
-
-    if(!map) {
-        gameWin()
-        return
+    
+        if(this.playerPosition.x && this.playerPosition.y) {
+            this._display.game.fillText(emojis["PLAYER"], this.playerPosition.x, this.playerPosition.y)
+        }
     }
 
-    time.start()
+    startGame() {
+        this.elementsSize = this._display.canvasSize / 10
+    
+        this._display.game.font = `${this.elementsSize}px Verdana`
+        this._display.game.textAlign = "end"
+    
+        const map = maps[this._level]
+    
+        if(!map) {
+            this.gameWin()
+            return
+        }
+    
+        this._time.start()
+    
+        const mapRows = map.trim().split('\n')
+        this.mapRowCols = mapRows.map(row => row.trim().split(''))
+    
+        this._lives.showLives()
+    
+        this.render(this.mapRowCols)
+    
+    }
 
-    const mapRows = map.trim().split('\n')
-    // mapRowCols = mapRows.map(row => row.trim().split(''))
-    setMapRowCols(mapRows.map(row => row.trim().split('')))
-    console.log({map, mapRows, mapRowCols})
+    get level() {
+        return this._level
+    }
 
-    showLives()
+    levelUp() {
+        this._level ++
+    }
 
-    render(mapRowCols)
+    resetLevel() {
+        this._level = 0
+    }
 
-}
+    levelWin() {
+        console.log("pasaste de nivel")
+        this.levelUp()
+        this.startGame()
+    }
 
-export const displaySize = () => {
-    if(window.innerHeight > window.innerWidth) {
-        // canvasSize = window.innerWidth * 0.8
-        setCanvasSize(window.innerWidth * 0.8)
-    } else {
-        // canvasSize = window.innerHeight * 0.8
-        setCanvasSize(window.innerHeight * 0.8)
-    } 
+    levelFail() {
+        console.log("chocaste contra un enemigo")
+        this._lives.reduceLives()
+    
+        if(this._lives.lives <= 0) {
+            this.resetLevel()
+            this._lives.resetLives()
+            this._time.end()
+        }
+    
+        this.resetPlayerPosition()
+        this.startGame()
+    }
 
-    canvas.setAttribute("width", String(canvasSize))
-    canvas.setAttribute("height", String(canvasSize))
+    resetPlayerPosition() {
+        this.playerPosition.x = undefined
+        this.playerPosition.y = undefined
+    }
 
-    startGame()
+    resetEnemyPositions() {
+        this.enemyPositions = []
+    }
+
+    set elementsSize(value: number) {
+        this._elementsSize = value
+    }
+
+    get elementsSize() {
+        return this._elementsSize
+    }
+
+    set mapRowCols(value: string[][]) {
+        this._mapRowCols = value
+    }
+
+    get mapRowCols() {
+        return this._mapRowCols
+    }
 }

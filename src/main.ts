@@ -1,24 +1,33 @@
 import './style.css'
-import { displaySize } from "./game"
-import { move, moveByKey } from './movements'
+import { Game } from "./game"
+import { Player } from './player'
+import { Display } from './globalVariables'
+import { Time } from './time'
+import { Lives } from './lives'
 
 const btnUp = document.querySelector("#up")
 const btnLeft = document.querySelector("#left")
 const btnRight  = document.querySelector("#right")
 const btnDown = document.querySelector("#down")
 
+const display = Display.create()
+const time = Time.create()
+const lives = Lives.create()
+const game = Game.create(time, lives, display)
+const player = Player.create(game, display)
+
+const main = () => {
+    display.displaySize() 
+    game.startGame()
+}
 
 
+window.addEventListener("DOMContentLoaded", main)
+window.addEventListener("resize", main)
 
-window.addEventListener("DOMContentLoaded", displaySize)
-window.addEventListener("resize", displaySize)
+window.addEventListener("keydown", player.moveByKey.bind(player))
+btnUp?.addEventListener("click", player.move("up"))
+btnLeft?.addEventListener("click", player.move("left"))
+btnRight?.addEventListener("click", player.move("right"))
+btnDown?.addEventListener("click", player.move("down"))
 
-window.addEventListener("keydown", moveByKey)
-btnUp?.addEventListener("click", move("up"))
-btnLeft?.addEventListener("click", move("left"))
-btnRight?.addEventListener("click", move("right"))
-btnDown?.addEventListener("click", move("down"))
-
-// function setCanvasSize(this: Window, ev: Event) {
-//     throw new Error('Function not implemented.')
-// }

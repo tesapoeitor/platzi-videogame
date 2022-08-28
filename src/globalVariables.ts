@@ -1,62 +1,44 @@
-interface Position {
-    x: undefined | number,
-    y: undefined | number
-}
+export class Display {
+    
+    private _canvas = document.querySelector("#game") as HTMLCanvasElement
+    private _game = this._canvas.getContext("2d") as CanvasRenderingContext2D
+    private _canvasSize = 0
+    
+    // Singleton
+    static instance: Display | null = null
+    private constructor() {}
+    static create(): Display {
+        if(Display.instance === null) { // Si no existe una instancia, se crea una
+          console.log("Se crea una instancia de Display")
+          Display.instance = new Display() // Aquí se llama al constructor privado
+        }
+        return Display.instance
+    }
+    
+    get canvas() {
+        return this._canvas
+    }
 
+    get game() {
+        return this._game
+    }
 
-export const canvas = document.querySelector("#game") as HTMLCanvasElement
-export const game = canvas.getContext("2d") as CanvasRenderingContext2D
+    set canvasSize(value: number) {
+        this._canvasSize = value
+    }
 
-export let canvasSize: number
-export const setCanvasSize = (value: number) => {
-    canvasSize = value
-}
+    get canvasSize() {
+        return this._canvasSize
+    }
 
-export let elementsSize: number
-export const setElementsSize = (value: number) => {
-    elementsSize = value
-}
-
-export let mapRowCols: string[][]
-export const setMapRowCols = (value: string[][]) => {
-    mapRowCols = value
-}
-
-export let level = 0
-export const levelUp = () => {
-    level ++
-}
-export const resetLevel = () => {
-    level = 0
-}
-
-export const playerPosition: Position = {
-    x: undefined,
-    y: undefined
-}
-export const resetPlayerPosition = () => {
-    playerPosition.x = undefined
-    playerPosition.y = undefined
-}
-
-export const giftPosition: Position = {
-    x: undefined,
-    y: undefined
-}
-
-
-export let enemyPositions: Position[] = [{
-    x: undefined,
-    y: undefined
-}]
-export const resetEnemyPositions = () => {
-    enemyPositions = []
-}
-
-export let lives = 3
-export const reduceLives = () => {
-    lives--
-}
-export const resetLives = () => {
-    lives = 3
+    displaySize = () => {
+        if(window.innerHeight > window.innerWidth) {
+            this._canvasSize = (window.innerWidth * 0.8)
+        } else {
+            this._canvasSize = (window.innerHeight * 0.8)
+        } 
+    
+        this._canvas.setAttribute("width", String(this._canvasSize))
+        this._canvas.setAttribute("height", String(this._canvasSize))
+    }
 }

@@ -1,15 +1,21 @@
 
-class Time {
+export class Time {
     private _timeStart = 0
     private _timePlayer = 0
     private _timeInterval: any
-    private _htmlNode = document.querySelector("#time") as HTMLElement
+    private _htmlNode = document.querySelector("#time") as HTMLSpanElement
     
-
-    // constructor(htmlNode: HTMLElement) {
-    //     this._htmlNode = htmlNode
-    // }
-    
+    // Singleton
+    static instance: Time | null = null
+    private constructor() {}
+    static create(): Time {
+        if(Time.instance === null) { // Si no existe una instancia, se crea una
+          console.log("Se crea una instancia de Time")
+          Time.instance = new Time() // Aquí se llama al constructor privado
+        }
+        return Time.instance
+    }
+ 
     set timeStart(value: number) {
         this._timeStart = value
     }
@@ -36,5 +42,3 @@ class Time {
         this._htmlNode.innerText = `${Date.now() - this._timeStart}`
     }
 }
-
-export const time = new Time()
