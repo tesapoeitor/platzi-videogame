@@ -1,7 +1,7 @@
 
 export class Time {
     private _timeStart = 0
-    private _timePlayer = 0
+    private _timePlayer = parseInt(localStorage.getItem("record_time") ?? "0")
     private _timeInterval: any
     private _htmlNode = document.querySelector("#time") as HTMLSpanElement
     
@@ -24,6 +24,10 @@ export class Time {
         return this._timeStart
     }
 
+    get playerTime() {
+        return this._timePlayer
+    }
+
     start() {
         if(!this._timeInterval) {
             this._timeStart = Date.now()
@@ -33,12 +37,16 @@ export class Time {
     }
 
     end() {
+        this._timePlayer = Date.now() - this._timeStart
+        console.log("tiempo " + this._timePlayer)
         this._timeStart = 0
         clearInterval(this._timeInterval)
         this._timeInterval = undefined
     }
     
     private showTimeDisplay() {
-        this._htmlNode.innerText = `${Date.now() - this._timeStart}`
+        this._timePlayer = Date.now() - this._timeStart
+        // this._htmlNode.innerText = `${Date.now() - this._timeStart}`
+        this._htmlNode.innerText = `${this._timePlayer}`
     }
 }

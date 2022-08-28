@@ -1,5 +1,4 @@
 import { Game } from "./game";
-import { Display } from "./globalVariables";
 import { emojis } from './maps'
 
 export class Player {
@@ -8,13 +7,12 @@ export class Player {
     static instance: Player | null = null
     private constructor(
         private _game: Game,
-        private _display: Display,
-
+        private _display = _game.display
     ) {}
-    static create(game: Game, global: Display): Player {
+    static create(game: Game): Player {
         if(Player.instance === null) { // Si no existe una instancia, se crea una
           console.log("Se crea una instancia de Player")
-          Player.instance = new Player(game, global) // Aquí se llama al constructor privado
+          Player.instance = new Player(game) // Aquí se llama al constructor privado
         }
         return Player.instance
     }

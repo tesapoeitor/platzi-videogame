@@ -1,8 +1,9 @@
 
 import { emojis, maps } from "./maps"
-import { Display } from "./globalVariables"
+import { Display } from "./display"
 import { Time } from "./time"
 import { Lives } from "./lives"
+import { Record } from "./record"
 
 
 interface Position {
@@ -31,13 +32,14 @@ export class Game {
     static instance: Game | null = null
     private constructor(
         private _time: Time,
+        private _record: Record,
         private _lives: Lives,
         private _display: Display
     ) {}
-    static create(time: Time, lives: Lives, global: Display): Game {
+    static create(time: Time, record: Record, lives: Lives, global: Display): Game {
         if(Game.instance === null) { // Si no existe una instancia, se crea una
           console.log("Se crea una instancia de Game")
-          Game.instance = new Game(time, lives, global) // Aquí se llama al constructor privado
+          Game.instance = new Game(time, record, lives, global) // Aquí se llama al constructor privado
         }
         return Game.instance
     }
@@ -46,6 +48,7 @@ export class Game {
     gameWin() {
         console.log("ganaste el juego")
         this._time.end()
+        this._record.save()
     }
 
     render(map: string[][]) {
@@ -98,6 +101,7 @@ export class Game {
         }
     
         this._time.start()
+        this._record.show()
     
         const mapRows = map.trim().split('\n')
         this.mapRowCols = mapRows.map(row => row.trim().split(''))
@@ -163,5 +167,9 @@ export class Game {
 
     get mapRowCols() {
         return this._mapRowCols
+    }
+
+    get display() {
+        return this._display
     }
 }

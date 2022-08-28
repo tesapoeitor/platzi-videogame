@@ -1,9 +1,10 @@
 import './style.css'
 import { Game } from "./game"
 import { Player } from './player'
-import { Display } from './globalVariables'
+import { Display } from './display'
 import { Time } from './time'
 import { Lives } from './lives'
+import { Record } from "./record"
 
 const btnUp = document.querySelector("#up")
 const btnLeft = document.querySelector("#left")
@@ -13,8 +14,9 @@ const btnDown = document.querySelector("#down")
 const display = Display.create()
 const time = Time.create()
 const lives = Lives.create()
-const game = Game.create(time, lives, display)
-const player = Player.create(game, display)
+const record = Record.create(time)
+const game = Game.create(time, record, lives, display)
+const player = Player.create(game)
 
 const main = () => {
     display.displaySize() 
