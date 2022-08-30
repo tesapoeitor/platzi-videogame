@@ -27,6 +27,7 @@ export class Game {
     }]
     private _elementsSize = 0
     private _mapRowCols: string[][] = [[]]
+    private _isFinish = false
 
     // Singleton
     static instance: Game | null = null
@@ -38,7 +39,6 @@ export class Game {
     ) {}
     static create(time: Time, record: Record, lives: Lives, global: Display): Game {
         if(Game.instance === null) { // Si no existe una instancia, se crea una
-          console.log("Se crea una instancia de Game")
           Game.instance = new Game(time, record, lives, global) // Aquí se llama al constructor privado
         }
         return Game.instance
@@ -46,9 +46,15 @@ export class Game {
 
 
     gameWin() {
-        console.log("ganaste el juego")
         this._time.end()
         this._record.save()
+        this._isFinish = true
+
+        const pos = this.display.canvasSize / 2
+        this._display.game.textAlign = "center"
+        this._display.game.fillStyle = "white"
+        this._display.game.fillText("Ganaste!", pos, pos)
+        this._display.game.textAlign = "end"
     }
 
     render(map: string[][]) {
@@ -59,8 +65,8 @@ export class Game {
         map.forEach((row, rowIndex) => {
             row.forEach((colum, columIndex) => {
                 const emoji = emojis[colum]
-                const posX = this.elementsSize * (rowIndex + 1)
-                const posY = this.elementsSize * (columIndex + 1)
+                const posX = this.elementsSize * (columIndex + 1)
+                const posY = this.elementsSize * (rowIndex + 1)
     
                 if(colum === "O" && (!this.playerPosition.x && !this.playerPosition.y)) {
                     this.playerPosition.x = posX
@@ -96,20 +102,20 @@ export class Game {
         const map = maps[this._level]
     
         if(!map) {
-            this.gameWin()
+            if(!this.isFinish)
+                this.gameWin()
             return
         }
     
         this._time.start()
-        this._record.show()
     
         const mapRows = map.trim().split('\n')
         this.mapRowCols = mapRows.map(row => row.trim().split(''))
     
         this._lives.showLives()
+        this._record.show()
     
         this.render(this.mapRowCols)
-    
     }
 
     get level() {
@@ -125,24 +131,35 @@ export class Game {
     }
 
     levelWin() {
-        console.log("pasaste de nivel")
         this.levelUp()
         this.startGame()
     }
 
     levelFail() {
-        console.log("chocaste contra un enemigo")
-        console.log("this " + this)
         this._lives.reduceLives()
+        this.resetPlayerPosition()
     
         if(this._lives.lives <= 0) {
             this.resetLevel()
             this._lives.resetLives()
             this._time.end()
+            this.gameOver()
+            setTimeout(this.startGame.bind(this), 2000)
+        } else {
+            this.startGame()
         }
-    
-        this.resetPlayerPosition()
-        this.startGame()
+    }
+
+    gameOver() {
+        for (let row = 0; row < 10; row++) {
+            for (let colum = 0; colum < 10; colum++) {
+                const emoji = emojis["BOMB_COLLISION"]
+                const posX = this.elementsSize * (colum + 1)
+                const posY = this.elementsSize * (row + 1)
+
+                this._display.game.fillText(emoji, posX, posY)
+            }            
+        }
     }
 
     resetPlayerPosition() {
@@ -172,5 +189,9 @@ export class Game {
 
     get display() {
         return this._display
+    }
+
+    get isFinish() {
+        return this._isFinish
     }
 }

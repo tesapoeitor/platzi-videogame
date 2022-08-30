@@ -10,7 +10,6 @@ export class Time {
     private constructor() {}
     static create(): Time {
         if(Time.instance === null) { // Si no existe una instancia, se crea una
-          console.log("Se crea una instancia de Time")
           Time.instance = new Time() // Aquí se llama al constructor privado
         }
         return Time.instance
@@ -38,7 +37,6 @@ export class Time {
 
     end() {
         this._timePlayer = Date.now() - this._timeStart
-        console.log("tiempo " + this._timePlayer)
         this._timeStart = 0
         clearInterval(this._timeInterval)
         this._timeInterval = undefined
@@ -46,7 +44,6 @@ export class Time {
     
     private showTimeDisplay() {
         this._timePlayer = Date.now() - this._timeStart
-        // this._htmlNode.innerText = `${Date.now() - this._timeStart}`
         this._htmlNode.innerText = `${this._timePlayer}`
     }
 }

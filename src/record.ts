@@ -4,7 +4,7 @@ export class Record {
 
     private _spanRecord = document.querySelector('#record') as HTMLSpanElement
     private _pResult  = document.querySelector('#result') as HTMLParagraphElement
-    private _recordTime = localStorage.getItem("record_time")
+    private _recordTime = localStorage.getItem("record_time") || ""
     
     // Singleton
     static instance: Record | null = null
@@ -14,7 +14,6 @@ export class Record {
     ) {}
     static create(time: Time): Record {
         if(Record.instance === null) { // Si no existe una instancia, se crea una
-          console.log("Se crea una instancia de Record")
           Record.instance = new Record(time) // Aquí se llama al constructor privado
         }
         return Record.instance
@@ -30,12 +29,13 @@ export class Record {
             }
         } else {
             localStorage.setItem("record_time", String(this._time.playerTime))
+            this._recordTime = String(this._time.playerTime)
             this._pResult.innerText = "Primera vez? Muy bien, pero ahora trata de superar tu tiempo"
         }
+        this.show()
     }
 
     show() {
-        const record = localStorage.getItem("record_time") as String
-        this._spanRecord.innerHTML = `${record}`
+        this._spanRecord.innerHTML = `${this._recordTime}`
     }
 }

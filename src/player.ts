@@ -11,7 +11,6 @@ export class Player {
     ) {}
     static create(game: Game): Player {
         if(Player.instance === null) { // Si no existe una instancia, se crea una
-          console.log("Se crea una instancia de Player")
           Player.instance = new Player(game) // Aquí se llama al constructor privado
         }
         return Player.instance
@@ -38,7 +37,6 @@ export class Player {
             
             this._display.game.fillText(emojis["BOMB_COLLISION"], x, y)
             setTimeout(this._game.levelFail.bind(this._game), 500)
-            // this._game.levelFail()
             return
         } 
         
@@ -63,8 +61,10 @@ export class Player {
                     
                 }
         
-                this._game.render(this._game.mapRowCols)
-                this.movePlayer(this._game.playerPosition.x, this._game.playerPosition.y)    
+                // this._game.render(this._game.mapRowCols)
+                this._game.startGame()
+                if(!this._game.isFinish)
+                    this.movePlayer(this._game.playerPosition.x, this._game.playerPosition.y)    
             }
     
         }

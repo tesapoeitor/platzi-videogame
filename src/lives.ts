@@ -9,7 +9,6 @@ export class Lives {
     private constructor() {}
     static create(): Lives {
         if(Lives.instance === null) { // Si no existe una instancia, se crea una
-          console.log("Se crea una instancia de Lives")
           Lives.instance = new Lives() // Aquí se llama al constructor privado
         }
         return Lives.instance
